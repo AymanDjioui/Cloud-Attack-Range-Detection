@@ -1,3 +1,4 @@
+# Docker Compose - SOC VM Orchestration (AI Engine + AI Panel + PostgreSQL)
 services:
   # ── PostgreSQL Database ──────────────────────────────────────
   db:

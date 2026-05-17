@@ -1,3 +1,4 @@
+# Terraform Infrastructure - LocalStack AWS Emulation Configuration
 terraform {
   required_providers {
     aws = {

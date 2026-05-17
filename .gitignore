@@ -1,0 +1,44 @@
+# ── Secrets & API Keys ──
+.env
+passwords.md
+
+# ── Reports, Papers & Prompts (private) ──
+README_1st.md
+Claude_Prompt.md
+Gemini_Deep_Research_Prompt.md
+Perplexity_Prompt.md
+Final_Research_Paper.md
+Introduction.md
+Research_Paper_Draft.txt
+Project_Progress.md
+Project_D2_Discussion_Notes.md
+Phase1_Walkthrough.md
+Phase4_Manual_Recon.md
+VM_Setup_Guide.md
+Cloud_Cyber_Range_Implementation_Plan*.pdf
+D2*Cloud*Attack*.pdf
+Springer_Nature_LaTeX_Template.pdf
+
+# ── Terraform state (contains sensitive data) ──
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+
+# ── LocalStack runtime data ──
+localstack-data/
+
+# ── Node modules ──
+node_modules/
+
+# ── Python cache ──
+__pycache__/
+*.pyc
+
+# ── OS files ──
+.DS_Store
+Thumbs.db
+
+# ── IDE ──
+.vscode/
+.idea/
+.gemini/

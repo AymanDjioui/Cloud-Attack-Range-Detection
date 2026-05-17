@@ -1,0 +1,14 @@
+<!--
+  ══════════════════════════════════════════════════════════════
+   CloudTrail JSON Decoder — Phase 3
+   
+   Since the Wazuh agent uses <log_format>json</log_format>,
+   JSON fields are auto-extracted. We only need a lightweight
+   decoder to tag the events properly.
+  ══════════════════════════════════════════════════════════════
+-->
+
+<decoder name="cloudtrail">
+  <prematch>eventSource</prematch>
+  <plugin_decoder>JSON_Decoder</plugin_decoder>
+</decoder>

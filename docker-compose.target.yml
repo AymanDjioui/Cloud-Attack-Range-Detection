@@ -1,0 +1,83 @@
+services:
+  localstack:
+    container_name: awslocal_emulator
+    image: localstack/localstack:3.4.0
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./localstack-data}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+  vulnerable-api:
+    container_name: securebank_api
+    build:
+      context: ./securebank-api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - AWS_ENDPOINT=http://localstack:4566
+      - DYNAMODB_TABLE=CompanyClients
+    depends_on:
+      - localstack
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+  # ── Mock IMDS (EC2 Instance Metadata Service) ────────────────
+  # Simulates 169.254.169.254 — the SecureBank API can reach
+  # this via SSRF using the Docker hostname "imds"
+  imds:
+    container_name: mock_imds
+    build:
+      context: ./mock-imds
+      dockerfile: Dockerfile
+    networks:
+      lab_network:
+        # Alias so attacker can reference it naturally
+        aliases:
+          - metadata
+          - instance-metadata
+    restart: unless-stopped
+
+  # ── Phase 2: CloudTrail Log Forwarder ────────────────────────
+  cloudtrail-forwarder:
+    container_name: cloudtrail_forwarder
+    build:
+      context: ./cloudtrail-forwarder
+      dockerfile: Dockerfile
+    environment:
+      - S3_BUCKET=company-cloudtrail-logs-local
+      - AWS_ENDPOINT=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - LOG_OUTPUT=/var/log/cloudtrail/cloudtrail.log
+      - POLL_INTERVAL=30
+      - API_CONTAINER=securebank_api
+    volumes:
+      - cloudtrail_logs:/var/log/cloudtrail
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - localstack
+      - vulnerable-api
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+networks:
+  lab_network:
+    driver: bridge
+
+volumes:
+  cloudtrail_logs:
+    driver: local
+    driver_opts:
+      type: none
+      device: /var/log/cloudtrail
+      o: bind

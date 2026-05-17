@@ -1,3 +1,4 @@
+# AI Analysis Engine - Gemini-Powered Wazuh Alert Processor
 #!/usr/bin/env python3
 """
 AI Analysis Engine — Phase 5

@@ -1,3 +1,4 @@
+# AI Insights Dashboard - Real-time SOC Panel with Security Assistant
 #!/usr/bin/env python3
 """
 AI Insights Web Panel — Phase 5

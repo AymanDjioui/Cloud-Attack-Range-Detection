@@ -1,3 +1,4 @@
+# Mock IMDS Server - Simulates AWS Instance Metadata Service (169.254.169.254)
 #!/usr/bin/env python3
 """
 Mock AWS Instance Metadata Service (IMDS)

@@ -13,7 +13,7 @@ localstack-data/
 # ── Node modules ──
 node_modules/
 
-# ── Python cache ──
+# ── Python cache & bytecode ──
 __pycache__/
 *.pyc
 

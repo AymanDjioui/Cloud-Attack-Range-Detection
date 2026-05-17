@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+# Cloud Supply Chain Attack Simulation - 8-Phase Automated SSRF Attack
 #!/bin/bash
 # ══════════════════════════════════════════════════════════════
 #  ⚔️  FULL ATTACK CHAIN — Cloud Supply Chain Compromise

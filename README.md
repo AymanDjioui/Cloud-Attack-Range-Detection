@@ -239,18 +239,38 @@ bash attack_chain.sh
 
 ## Screenshots
 
-<!-- Screenshots will be added here -->
+### 🏦 SecureBank — Vulnerable Banking Application
 
 | Screenshot | Description |
 |-----------|-------------|
-| ![SecureBank Login](screenshots/securebank-login.png) | SecureBank — The vulnerable banking application |
-| ![SecureBank Dashboard](screenshots/securebank-dashboard.png) | SecureBank — Account dashboard with transactions |
-| ![SSRF Attack](screenshots/ssrf-attack.png) | SSRF exploitation via the payment gateway |
-| ![Wazuh Alerts](screenshots/wazuh-alerts.png) | Wazuh SIEM — Custom alerts triggered by the attack |
-| ![AI Dashboard](screenshots/ai-dashboard.png) | AI Insights — Threat intelligence dashboard |
-| ![AI Analytics](screenshots/ai-analytics.png) | AI Analytics — Alert activity breakdown |
-| ![Security Assistant](screenshots/security-assistant.png) | AI Security Assistant chatbot |
-| ![Attack Chain Terminal](screenshots/attack-chain.png) | Attack chain execution from Kali Linux |
+| ![SecureBank Login](screenshots/01-securebank-login.png) | Login page with demo accounts |
+| ![SecureBank Dashboard](screenshots/02-securebank-dashboard.png) | Account dashboard with transactions |
+| ![SSRF Endpoint](screenshots/03-ssrf-vulnerable-endpoint.png) | The vulnerable "Gateway Verification" endpoint (SSRF vector) |
+
+### 🔴 Attack Chain — Kali Linux
+
+| Screenshot | Description |
+|-----------|-------------|
+| ![Recon & Auth](screenshots/11-attack-chain-recon.png) | Step 1-2: Reconnaissance, brute-force, and successful login |
+| ![SSRF & Creds](screenshots/12-attack-chain-ssrf-creds.png) | Step 3-4: SSRF exploitation and IAM credential theft |
+| ![Data Exfiltration](screenshots/13-attack-chain-exfiltration.png) | Step 5-6: Privilege escalation and DynamoDB data dump |
+
+### 🛡️ Wazuh SIEM — Detection
+
+| Screenshot | Description |
+|-----------|-------------|
+| ![Wazuh Overview](screenshots/04-wazuh-overview.png) | Wazuh dashboard overview with alert severity summary |
+| ![Wazuh Discover](screenshots/05-wazuh-alerts-discover.png) | Alert discovery view — 5 critical SSRF alerts detected |
+| ![Alert Detail](screenshots/06-wazuh-alert-detail-ssrf.png) | Detailed SSRF alert with source IP, request parameters, and event metadata |
+
+### 🤖 AI Threat Intelligence Dashboard
+
+| Screenshot | Description |
+|-----------|-------------|
+| ![AI Dashboard](screenshots/07-ai-dashboard-alerts.png) | AI-powered threat analysis with severity-coded alerts |
+| ![AI Expanded](screenshots/08-ai-dashboard-expanded.png) | Expanded alert view with AI analysis, remediation steps, and MITRE ATT&CK mapping |
+| ![AI Analytics](screenshots/09-ai-analytics.png) | Analytics: severity distribution, top attacker IPs, MITRE mapping, and activity log |
+| ![Security Assistant](screenshots/10-security-assistant.png) | AI Security Assistant analyzing active threats in real-time |
 
 ---
 
@@ -278,10 +298,10 @@ bash attack_chain.sh
 | **Badr Jakout** | Wazuh SIEM & Detection Rules |
 | **Amine Chaker** | SecureBank Application & SSRF Vulnerability |
 
-> 📧 **Supervised by:** Prof. Maleh — ENSA El Jadida
+> 📧 **Supervised by:** Prof. Maleh — ENSA Khouribga
 
 ---
 
 ## License
 
-This project is for **educational purposes only**. It was developed as part of a cybersecurity course at ENSA El Jadida. The attack techniques demonstrated should only be used in controlled lab environments.
+This project is for **educational purposes only**. It was developed as part of a cybersecurity course at ENSA Khouribga. The attack techniques demonstrated should only be used in controlled lab environments.

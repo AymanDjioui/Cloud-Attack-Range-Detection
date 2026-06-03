@@ -133,81 +133,76 @@ def health():
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
-    """Chat Assistant — uses OpenRouter (free models) or falls back to Gemini."""
+    """Chat Assistant — uses Claude or falls back to Gemini."""
     data = request.json
     user_msg = data.get("message", "")
     context = data.get("context", "")
 
-    openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+    claude_key = os.getenv("CLAUDE_API_KEY", "").strip()
+    if not claude_key:
+        # Default fallback if env var is empty or missing
+        claude_key = ""
+    
     gemini_key = GEMINI_API_KEY
 
-    print(f"[CHAT] OpenRouter key set: {bool(openrouter_key)}, Gemini key set: {bool(gemini_key)}")
+    print(f"[CHAT] Claude key set: {bool(claude_key)}, Gemini key set: {bool(gemini_key)}")
 
-    if not openrouter_key and not gemini_key:
+    if not claude_key and not gemini_key:
         return jsonify({
             "success": False,
-            "reply": "AI Assistant offline. No API keys found. Set OPENROUTER_API_KEY or GEMINI_API_KEY in .env file."
+            "reply": "AI Assistant offline. No API keys found. Set CLAUDE_API_KEY or GEMINI_API_KEY in .env file."
         })
 
     system_prompt = (
         "You are a Senior SOC Analyst AI Assistant embedded in a Wazuh-based Cloud Security Range dashboard. "
         "Help security analysts understand alerts, suggest remediation, and answer security questions. "
-        "Keep answers concise, professional, and actionable. Use bullet points where helpful."
+        "Keep answers concise, professional, and actionable. "
+        "IMPORTANT: Do NOT use any Markdown formatting like #, ##, or **. The chat interface does not support it. "
+        "Use plain text, new lines, and standard dash (-) bullets for organization."
     )
 
-    # ── Try OpenRouter (rotate through free models) ──
-    FREE_MODELS = [
-        "google/gemma-4-31b-it:free",
-        "deepseek/deepseek-r1:free",
-        "meta-llama/llama-3.1-8b-instruct:free",
-        "google/gemma-2-9b-it:free",
-    ]
-
-    if openrouter_key:
-        for model in FREE_MODELS:
-            try:
-                payload = {
-                    "model": model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": f"Dashboard Context:\n{context}\n\nAnalyst Question: {user_msg}"}
-                    ],
-                    "max_tokens": 800,
-                    "temperature": 0.4
-                }
-                print(f"[CHAT] Trying {model}...")
-                r = requests.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {openrouter_key}",
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": "http://192.168.100.10:3000",
-                        "X-Title": "SOC AI Assistant"
-                    },
-                    json=payload,
-                    timeout=30
-                )
-                if r.status_code == 429:
-                    print(f"[CHAT] {model} rate-limited, trying next...")
-                    continue
-                if r.status_code != 200:
-                    print(f"[CHAT] {model} error {r.status_code}: {r.text[:200]}")
-                    continue
+    # ── Try Claude API ──
+    if claude_key:
+        try:
+            print("[CHAT] Trying Claude...")
+            headers = {
+                "x-api-key": claude_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            }
+            payload = {
+                "model": "claude-haiku-4-5",
+                "max_tokens": 1024,
+                "temperature": 0.4,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user", "content": f"Dashboard Context:\n{context}\n\nAnalyst Question: {user_msg}"}
+                ]
+            }
+            r = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+            if r.status_code == 200:
                 resp = r.json()
-                text = resp["choices"][0]["message"]["content"]
-                print(f"[CHAT] Success with {model}")
+                text = resp["content"][0]["text"]
+                print("[CHAT] Success with Claude")
                 return jsonify({"success": True, "reply": text.strip()})
-            except Exception as e:
-                print(f"[CHAT] {model} failed: {e}")
-                continue
-
-        # All free models failed, try Gemini
-        if not gemini_key:
-            return jsonify({"success": False, "reply": "All free AI models are busy. Please wait 30 seconds and try again."})
+            else:
+                error_msg = f"Claude Error {r.status_code}: {r.json().get('error', {}).get('message', r.text[:100])}"
+                print(f"[CHAT] {error_msg}")
+                return jsonify({"success": False, "reply": error_msg})
+        except Exception as e:
+            error_msg = f"Claude Request Failed: {str(e)}"
+            print(f"[CHAT] {error_msg}")
+            return jsonify({"success": False, "reply": error_msg})
 
     # ── Fallback to Gemini ──
     prompt = f"{system_prompt}\n\nDashboard Context:\n{context}\n\nAnalyst Question: {user_msg}"
     try:
+        print("[CHAT] Trying Gemini...")
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],

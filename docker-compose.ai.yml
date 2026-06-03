@@ -54,7 +54,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://admin:admin_password@db:5432/insights_db
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY:-}
     networks:
       - ai_network
     restart: unless-stopped

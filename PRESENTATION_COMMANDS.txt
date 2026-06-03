@@ -1,0 +1,60 @@
+========================================================================
+🚀 CLOUD ATTACK RANGE - PRESENTATION CHEAT SHEET 🚀
+========================================================================
+
+Follow these exact steps during your Datashow presentation tomorrow.
+Just copy and paste the commands into your terminals!
+
+------------------------------------------------------------------------
+STEP 1: BUILD THE CLOUD INFRASTRUCTURE
+(Run this on your Cloud VM: djioui@192.168.100.20)
+------------------------------------------------------------------------
+cd ~/cloud-target/terraform
+
+# Remove the broken cloudtrail file so you don't get a red error in front of the professor
+rm cloudtrail.tf
+
+# Deploy the AWS environment
+terraform apply --auto-approve
+
+
+------------------------------------------------------------------------
+STEP 2: PROVE TO THE PROFESSOR THE CLOUD WAS BUILT
+(Run this on your Cloud VM: djioui@192.168.100.20)
+------------------------------------------------------------------------
+# Show them the IAM Roles
+docker exec -it awslocal_emulator awslocal iam list-roles
+
+# Show them the DynamoDB Tables
+docker exec -it awslocal_emulator awslocal dynamodb list-tables
+
+
+------------------------------------------------------------------------
+STEP 3: EXECUTE THE HACK
+(Run this on your Kali Linux VM)
+------------------------------------------------------------------------
+cd ~/kali-attack
+
+# Run the automated attack chain script
+./attack_chain.sh
+
+# Show the audience the stolen team credit cards!
+cat /tmp/exfiltrated_data.json
+
+
+------------------------------------------------------------------------
+STEP 4: SHOW THE AI SECURITY DASHBOARD
+(Run this on your main PC / browser)
+------------------------------------------------------------------------
+1. Open your browser and go to the dashboard:
+   http://192.168.100.10:3000
+
+2. Point out the CRITICAL alerts on the screen (SSRF and Data Exfiltration)
+
+3. Open the "Security Assistant" Chatbox on the right and type this question:
+   "Summarize the recent critical alerts and explain how the SSRF attack allowed the hacker to steal the DynamoDB customer data."
+
+
+========================================================================
+GOOD LUCK TEAM: Ayman Djioui, Aymane Elouafi, Badr Jakout, Amine Chaker
+========================================================================
